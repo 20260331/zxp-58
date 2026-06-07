@@ -9,7 +9,7 @@
     UNFINISHED_TAPE_SCORE_LOSS
   } = window.GameConstants;
 
-  const { TapeGenerator, ArchiveRules, GameState, GameTimer, GameUI } = window;
+  const { TapeGenerator, ArchiveRules, GameState, GameTimer, GameUI, ArchiveRecord } = window;
 
   function initDay() {
     const state = GameState.getState();
@@ -18,6 +18,7 @@
     const tapeCount = 4 + Math.floor(state.day * 0.8);
     state.tapes = TapeGenerator.generateTapeBatch(state.day, tapeCount);
     GameState.clearCurrentTape();
+    GameState.resetNightCounters(tapeCount);
 
     state.maxTime = Math.max(40, 100 - (state.day - 1) * 6);
     state.timeLeft = state.maxTime;
@@ -88,6 +89,7 @@
       state.score += earned;
       state.reputation = Math.min(100, state.reputation + REPUTATION_GAIN_PER_CORRECT);
       GameState.incrementShelfCount(shelfId);
+      GameState.incrementCorrectCount();
 
       const shelfName = SHELF_DEFS.find(s => s.id === shelfId).name;
       GameUI.addMessage(`✓ 磁带 ${tape.id} 正确归档于 ${shelfName} (+${earned}分)`, 'success');
@@ -97,6 +99,7 @@
       state.mistakes++;
       state.reputation = Math.max(0, state.reputation - REPUTATION_LOSS_PER_MISTAKE);
       state.score = Math.max(0, state.score - MISTAKE_PENALTY);
+      GameState.incrementWrongCount();
 
       const correctName = SHELF_DEFS.find(s => s.id === correctShelf).name;
       GameUI.addMessage(`✗ 磁带 ${tape.id} 归档错误! 应放入 ${correctName} (-${MISTAKE_PENALTY}分)`, 'error');
@@ -131,6 +134,10 @@
     if (state.gameOver) return;
     GameTimer.stop();
 
+    const record = ArchiveRecord.buildNightRecord(state);
+    ArchiveRecord.addRecord(record);
+    GameUI.addMessage(`📁 第 ${state.day} 夜记录已存入值班档案室`, 'system');
+
     const totalStored = GameState.getTotalStored();
     GameUI.setNightSummary(state.day, state, totalStored);
     GameUI.showOverlay(GameUI.ELEMENT_IDS.NIGHT_OVERLAY);
@@ -148,10 +155,14 @@
     state.gameOver = true;
     GameTimer.stop();
 
+    const record = ArchiveRecord.buildNightRecord(state, { gameOver: true, reason: reason });
+    ArchiveRecord.addRecord(record);
+
     const totalStored = GameState.getTotalStored();
     GameUI.setGameOverSummary(reason, state, totalStored);
     GameUI.showOverlay(GameUI.ELEMENT_IDS.GAMEOVER_OVERLAY);
     GameUI.addMessage(`═══ 雇佣终止 ═══`, 'error');
+    GameUI.addMessage(`📁 最终记录已存入值班档案室`, 'system');
   }
 
   function resetGame() {
@@ -185,6 +196,20 @@
     GameUI.hideOverlay(GameUI.ELEMENT_IDS.HELP_OVERLAY);
   }
 
+  function showArchive() {
+    const state = GameState.getState();
+    if (!state.paused && state.currentTape) {
+      state.paused = true;
+      GameUI.updatePauseButton(true);
+    }
+    GameUI.renderArchive();
+    GameUI.showOverlay(GameUI.ELEMENT_IDS.ARCHIVE_OVERLAY);
+  }
+
+  function closeArchive() {
+    GameUI.hideOverlay(GameUI.ELEMENT_IDS.ARCHIVE_OVERLAY);
+  }
+
   window.GameFlow = {
     startGame,
     nextNight,
@@ -192,6 +217,8 @@
     togglePause,
     showHelp,
     closeHelp,
+    showArchive,
+    closeArchive,
     initDay
   };
 
@@ -199,4 +226,6 @@
   window.nextNight = nextNight;
   window.resetGame = resetGame;
   window.closeHelp = closeHelp;
+  window.showArchive = showArchive;
+  window.closeArchive = closeArchive;
 })();

@@ -19,7 +19,9 @@
     NIGHT_SUMMARY: 'night-summary',
     GAMEOVER_OVERLAY: 'gameover-overlay',
     GAMEOVER_SUMMARY: 'gameover-summary',
-    HELP_OVERLAY: 'help-overlay'
+    HELP_OVERLAY: 'help-overlay',
+    ARCHIVE_OVERLAY: 'archive-overlay',
+    ARCHIVE_CONTENT: 'archive-content'
   };
 
   function $(id) {
@@ -195,6 +197,88 @@
     $(ELEMENT_IDS.MESSAGES_LOG).innerHTML = '';
   }
 
+  function renderArchive() {
+    const container = $(ELEMENT_IDS.ARCHIVE_CONTENT);
+    const records = window.ArchiveRecord.getRecentRecords();
+
+    if (!records || records.length === 0) {
+      container.innerHTML = `
+        <div class="archive-empty">
+          <div style="font-size:10px;color:#6a6a8a;">档案库为空</div>
+          <div style="font-size:8px;color:#5a5a7a;margin-top:8px;">
+            完成至少一夜工作后，记录将自动存入此处。
+          </div>
+        </div>
+      `;
+      return;
+    }
+
+    let html = `<div class="archive-list">`;
+
+    records.forEach((rec, idx) => {
+      const dateStr = new Date(rec.timestamp).toLocaleString('zh-CN', {
+        month: '2-digit', day: '2-digit',
+        hour: '2-digit', minute: '2-digit'
+      });
+
+      const typeBadge = rec.gameOver
+        ? `<span class="badge badge-danger">雇佣终止</span>`
+        : `<span class="badge badge-good">夜间完成</span>`;
+
+      const accuracy = (rec.correctCount + rec.wrongCount) > 0
+        ? Math.round((rec.correctCount / (rec.correctCount + rec.wrongCount)) * 100)
+        : 0;
+
+      html += `
+        <div class="archive-record ${rec.gameOver ? 'record-fired' : 'record-ok'}">
+          <div class="record-header">
+            <div class="record-day">第 ${rec.day} 夜</div>
+            <div class="record-meta">
+              ${typeBadge}
+              <span class="record-date">${dateStr}</span>
+            </div>
+          </div>
+          <div class="record-stats">
+            <div class="record-stat">
+              <span class="record-stat-label">得分</span>
+              <span class="record-stat-value good">${rec.score}</span>
+            </div>
+            <div class="record-stat">
+              <span class="record-stat-label">声誉</span>
+              <span class="record-stat-value ${rec.reputation <= 30 ? 'danger' : ''}">${rec.reputation}</span>
+            </div>
+            <div class="record-stat">
+              <span class="record-stat-label">失误</span>
+              <span class="record-stat-value ${rec.mistakes > 1 ? 'danger' : ''}">${rec.mistakes}/${rec.maxMistakes}</span>
+            </div>
+            <div class="record-stat">
+              <span class="record-stat-label">正确率</span>
+              <span class="record-stat-value ${accuracy >= 80 ? 'good' : accuracy >= 50 ? '' : 'danger'}">${accuracy}%</span>
+            </div>
+          </div>
+          <div class="record-breakdown">
+            <span class="breakdown-label">本夜归档:</span>
+            <span class="breakdown-detail">
+              正确 ${rec.correctCount} · 错误 ${rec.wrongCount} · 共 ${rec.totalTapes} 盘
+            </span>
+          </div>
+          <div class="record-shelves">
+            ${Object.values(rec.shelfBreakdown).filter(s => s.count > 0).map(s => `
+              <span class="shelf-tag" style="border-color:${s.color};color:${s.color};">
+                ${s.name.replace(/^[A-Z]-\d+\s*/, '')}: ${s.count}
+              </span>
+            `).join('') || '<span class="breakdown-empty">无归档</span>'}
+          </div>
+          ${rec.endReason ? `<div class="record-end-reason">终止原因: ${rec.endReason}</div>` : ''}
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+    html += `<div class="archive-footer">最多保存 ${window.ArchiveRecord.MAX_RECORDS} 条最近记录</div>`;
+    container.innerHTML = html;
+  }
+
   window.GameUI = {
     ELEMENT_IDS,
     addMessage,
@@ -209,6 +293,7 @@
     hideOverlay,
     setNightSummary,
     setGameOverSummary,
-    clearMessages
+    clearMessages,
+    renderArchive
   };
 })();

@@ -418,3 +418,174 @@ button:disabled {
   .shelves { grid-template-columns: repeat(2, 1fr); }
   .title { font-size: 11px; }
 }
+
+.archive-container {
+  width: 100%;
+  max-width: 680px;
+  max-height: 65vh;
+  overflow-y: auto;
+  background: #0a0a12;
+  border: 3px solid #3a3a5c;
+  padding: 16px;
+  margin: 12px 0 20px 0;
+  text-align: left;
+}
+
+.archive-empty {
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.archive-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.archive-record {
+  background: #14141f;
+  border: 2px solid #3a3a5c;
+  padding: 12px;
+  position: relative;
+}
+
+.archive-record.record-ok {
+  border-left: 4px solid #66ff99;
+}
+
+.archive-record.record-fired {
+  border-left: 4px solid #ff6666;
+  background: #1a0e0e;
+}
+
+.record-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 2px dashed #3a3a5c;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.record-day {
+  font-size: 11px;
+  color: #a8a8d8;
+  font-weight: bold;
+}
+
+.record-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.record-date {
+  font-size: 7px;
+  color: #6a6a8a;
+}
+
+.badge {
+  font-size: 7px;
+  padding: 2px 6px;
+  border: 2px solid;
+}
+
+.badge-good {
+  color: #66ff99;
+  border-color: #66ff99;
+  background: rgba(102, 255, 153, 0.1);
+}
+
+.badge-danger {
+  color: #ff6666;
+  border-color: #ff6666;
+  background: rgba(255, 102, 102, 0.1);
+}
+
+.record-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.record-stat {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  text-align: center;
+  background: #0a0a12;
+  padding: 6px 4px;
+  border: 1px solid #2a2a45;
+}
+
+.record-stat-label {
+  font-size: 6px;
+  color: #6a6a8a;
+}
+
+.record-stat-value {
+  font-size: 11px;
+  color: #e8e8f0;
+}
+
+.record-stat-value.good { color: #66ff99; }
+.record-stat-value.danger { color: #ff6666; }
+
+.record-breakdown {
+  font-size: 7px;
+  color: #9090b0;
+  margin-bottom: 8px;
+  line-height: 1.6;
+}
+
+.breakdown-label {
+  color: #6a6a8a;
+}
+
+.breakdown-detail {
+  color: #a8a8d8;
+  margin-left: 4px;
+}
+
+.breakdown-empty {
+  color: #555577;
+  font-style: italic;
+}
+
+.record-shelves {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 6px;
+}
+
+.shelf-tag {
+  font-size: 6px;
+  padding: 2px 5px;
+  border: 1px solid;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.record-end-reason {
+  font-size: 7px;
+  color: #ff6666;
+  margin-top: 6px;
+  padding-top: 6px;
+  border-top: 1px dashed #3a3a5c;
+}
+
+.archive-footer {
+  text-align: center;
+  font-size: 7px;
+  color: #5a5a7a;
+  margin-top: 12px;
+  padding-top: 10px;
+  border-top: 2px dashed #3a3a5c;
+}
+
+@media (max-width: 520px) {
+  .record-stats { grid-template-columns: repeat(2, 1fr); }
+}

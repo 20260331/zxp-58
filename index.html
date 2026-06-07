@@ -60,6 +60,7 @@
       拖动录音带至对应柜位 · 注意识别特征
     </div>
     <div style="display:flex;gap:8px;">
+      <button id="btn-archive" class="btn-primary">档案室</button>
       <button id="btn-pause" class="btn-primary">暂停</button>
       <button id="btn-help" class="btn-primary">规则</button>
     </div>
@@ -141,12 +142,21 @@
       <button onclick="closeHelp()" class="btn-primary">▶ 返回工作</button>
     </div>
   </div>
+
+  <div class="overlay hidden" id="archive-overlay">
+    <h2>📁 值班档案室</h2>
+    <div id="archive-content" class="archive-container"></div>
+    <div class="overlay-buttons">
+      <button onclick="closeArchive()" class="btn-primary">▶ 返回工作</button>
+    </div>
+  </div>
 </div>
 
 <script src="js/constants.js"></script>
 <script src="js/utils.js"></script>
 <script src="js/archiveRules.js"></script>
 <script src="js/tapeGenerator.js"></script>
+<script src="js/archiveRecord.js"></script>
 <script src="js/gameState.js"></script>
 <script src="js/timer.js"></script>
 <script src="js/ui.js"></script>

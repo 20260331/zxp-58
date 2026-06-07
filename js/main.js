@@ -4,6 +4,7 @@
   function initEventListeners() {
     document.getElementById(GameUI.ELEMENT_IDS.BTN_PAUSE).addEventListener('click', GameFlow.togglePause);
     document.getElementById('btn-help').addEventListener('click', GameFlow.showHelp);
+    document.getElementById('btn-archive').addEventListener('click', GameFlow.showArchive);
   }
 
   function init() {

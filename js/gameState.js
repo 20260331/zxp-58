@@ -14,7 +14,10 @@
       timeLeft: 100,
       maxTime: 100,
       paused: false,
-      gameOver: false
+      gameOver: false,
+      nightCorrectCount: 0,
+      nightWrongCount: 0,
+      nightTotalTapes: 0
     };
   }
 
@@ -65,6 +68,20 @@
     return Object.values(state.shelfCounts).reduce((a, b) => a + b, 0);
   }
 
+  function resetNightCounters(totalTapes) {
+    state.nightCorrectCount = 0;
+    state.nightWrongCount = 0;
+    state.nightTotalTapes = totalTapes || 0;
+  }
+
+  function incrementCorrectCount() {
+    state.nightCorrectCount++;
+  }
+
+  function incrementWrongCount() {
+    state.nightWrongCount++;
+  }
+
   window.GameState = {
     getState,
     setState,
@@ -74,6 +91,9 @@
     getNextTape,
     clearCurrentTape,
     incrementShelfCount,
-    getTotalStored
+    getTotalStored,
+    resetNightCounters,
+    incrementCorrectCount,
+    incrementWrongCount
   };
 })();
